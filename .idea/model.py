@@ -14,7 +14,7 @@ def mediapipe_detection(image, model):
     results = model.process(image)                 # Make prediction
     image.flags.writeable = True                   # Image is now writeable 
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR) # COLOR COVERSION RGB 2 BGR
-    return image, results
+    return image, results 
 
 def draw_landmarks(image, results):
     mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACEMESH_CONTOURS) # Draw face connections
