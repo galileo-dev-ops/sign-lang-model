@@ -3,12 +3,19 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+import gc
+
 import cv2
 import skimage
-from skimage.transform import resize
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix
 
 import tensorflow as tf
-from tensorflow import keras
+from keras.utils import to_categorical
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D, Activation, Dense, Flatten
+from keras.callbacks import EarlyStopping
+
 import os
 
 print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
@@ -24,7 +31,7 @@ target_dims = (imageSize, imageSize, 3)
 num_classes = 29
 
 train_len = 87000
-train_dir = 'asl_alphabet_train'
+train_dir = 'asl_alphabet_train/'
 
 
 def get_data(folder):
@@ -107,3 +114,87 @@ def get_data(folder):
 
 X_train, y_train = get_data(train_dir)
 print("Images successfully imported...")
+
+print("The shape of X_train is : ", X_train.shape)
+print("The shape of y_train is : ", y_train.shape)
+
+print("The shape of one image is : ", X_train[0].shape)
+
+X_data = X_train
+y_data = y_train
+print("Copies made...")
+
+X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=0.3, random_state=42, stratify=y_data)
+
+y_cat_train = to_categorical(y_train, 29)
+y_cat_test = to_categorical(y_test, 29)
+
+# Checking the dimensions of all the variables
+print(X_train.shape)
+print(y_train.shape)
+print(X_test.shape)
+print(y_test.shape)
+print(y_cat_train.shape)
+print(y_cat_test.shape)
+
+del X_data
+del y_data
+gc.collect()
+
+model = Sequential()
+
+model.add(Conv2D(32, (5, 5), input_shape=(64, 64, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D((2, 2)))
+
+model.add(Conv2D(64, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D((2, 2)))
+
+model.add(Conv2D(64, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D((2, 2)))
+
+model.add(Flatten())
+
+model.add(Dense(128, activation='relu'))
+
+model.add(Dense(29, activation='softmax'))
+
+model.summary()
+
+early_stop = EarlyStopping(monitor='val_loss', patience=2)
+
+model.compile(optimizer='adam',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+model.fit(X_train, y_cat_train,
+          epochs=50,
+          batch_size=64,
+          verbose=2,
+          validation_data=(X_test, y_cat_test),
+          callbacks=[early_stop])
+
+metrics = pd.DataFrame(model.history.history)
+print("The model metrics are")
+print(metrics)
+
+metrics[['loss', 'val_loss']].plot()
+plt.show()
+
+metrics[['accuracy', 'val_accuracy']].plot()
+plt.show()
+
+model.evaluate(X_test, y_cat_test, verbose=0)
+
+predictions = model.predict(X_test)
+print("Predictions done...")
+
+print(classification_report(y_test, predictions))
+plt.figure(figsize=(12, 12))
+sns.heatmap(confusion_matrix(y_test, predictions))
+plt.show()
+
+model.save('ASL.h5')
+print("Model saved successfully...")
