@@ -31,14 +31,14 @@ while True:
                 aspectRatio = h / w
                 if aspectRatio > 1:
                     k = imgSize / h
-                    wCal = math.ceil(k * w)
+                    wCal = int(k * w)
                     imgResize = cv2.resize(imgCrop, (wCal, imgSize))
                     imgResizeShape = imgResize.shape
                     wGap = int((imgSize - wCal) / 2)
                     imgWhite[:, wGap:wCal + wGap] = imgResize
                 else:
                     k = imgSize / w
-                    hCal = math.ceil(k * h)
+                    hCal = int(k * h)
                     imgResize = cv2.resize(imgCrop, (imgSize, hCal))
                     imgResizeShape = imgResize.shape
                     hGap = int((imgSize - hCal) / 2)
