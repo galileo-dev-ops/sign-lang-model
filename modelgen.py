@@ -50,6 +50,9 @@ def get_data(folder):
                 label = 3
             elif folderName in ['E']:
                 label = 4
+            else:
+                label = 29
+            '''
             elif folderName in ['F']:
                 label = 5
             elif folderName in ['G']:
@@ -98,8 +101,7 @@ def get_data(folder):
                 label = 27
             elif folderName in ['space']:
                 label = 28
-            else:
-                label = 29
+            '''
             for image_filename in os.listdir(folder + folderName):
                 img_file = cv2.imread(folder + folderName + '/' + image_filename)
                 if img_file is not None:
@@ -126,8 +128,8 @@ print("Copies made...")
 
 X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=0.3, random_state=42, stratify=y_data)
 
-y_cat_train = to_categorical(y_train, 29)
-y_cat_test = to_categorical(y_test, 29)
+y_cat_train = to_categorical(y_train, 5)
+y_cat_test = to_categorical(y_test, 5)
 
 # Checking the dimensions of all the variables
 print(X_train.shape)
@@ -163,7 +165,7 @@ model.add(Dense(29, activation='softmax'))
 
 model.summary()
 
-early_stop = EarlyStopping(monitor='val_loss', patience=2)
+early_stop = EarlyStopping(monitor='val_loss', patience=20)
 
 model.compile(optimizer='adam',
               loss='categorical_crossentropy',
@@ -171,7 +173,7 @@ model.compile(optimizer='adam',
 
 model.fit(X_train, y_cat_train,
           epochs=50,
-          batch_size=64,
+          batch_size=128,
           verbose=2,
           validation_data=(X_test, y_cat_test),
           callbacks=[early_stop])
@@ -194,9 +196,6 @@ print("Predictions done...")
 # Removed classification report and confusion matrix for now
 # Rebound array to original shape
 
-plt.figure(figsize=(12, 12))
-sns.heatmap(confusion_matrix(y_test, predictions))
-plt.show()
-
 model.save('ASL.h5')
 print("Model saved successfully...")
+
