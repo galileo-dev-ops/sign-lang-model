@@ -5,7 +5,7 @@ import math
 import time
 cap = cv2.VideoCapture(0)
 detector = HandDetector(maxHands=1)
-offset = 15
+offset = 20
 imgSize = 300
 folder = "Data/A"
 counter = 0
@@ -23,6 +23,12 @@ while True:
         x = max(0, x - offset)
         h = min(img.shape[0] - y, h + offset)
         w = min(img.shape[1] - x, w + offset)
+
+        if h > 0 and w > 0:
+            imgCrop = img[y - offset:y + h + offset, x - offset:x + w + offset]
+            # Rest of your code...
+        else:
+            print("Cropped image is empty. Skipping this frame.")
 
         imgCrop = img[y - offset:y + h + offset, x - offset:x + w + offset]
         imgCropShape = imgCrop.shape
