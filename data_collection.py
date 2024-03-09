@@ -1,12 +1,10 @@
 import cv2
 from cvzone.HandTrackingModule import HandDetector
-from cvzone.ClassificationModule import Classifier
 import numpy as np
 import math
 import time
 cap = cv2.VideoCapture(0)
 detector = HandDetector(maxHands=1)
-classifier = Classifier('keras_model.h5', 'labels.txt')
 offset = 20
 imgSize = 300
 
@@ -41,8 +39,6 @@ while True:
                     imgResizeShape = imgResize.shape
                     wGap = int((imgSize - wCal) / 2)
                     imgWhite[:, wGap:wCal + wGap] = imgResize
-                    prediction, index = classifier.getPrediction(imgWhite)
-                    print(prediction, index)
                 else:
                     k = imgSize / w
                     hCal = int(k * h)
