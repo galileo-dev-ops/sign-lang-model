@@ -5,12 +5,13 @@ import math
 import time
 cap = cv2.VideoCapture(0)
 detector = HandDetector(maxHands=1)
-offset = 20
+offset = 15
 imgSize = 300
-folder = "Data/B"
+folder = "Data/A"
 counter = 0
 while True:
     success, img = cap.read()
+    img = cv2.resize(img, (640, 480))
     hands, img = detector.findHands(img)
     if hands:
         hand = hands[0]
@@ -23,7 +24,7 @@ while True:
         h = min(img.shape[0] - y, h + offset)
         w = min(img.shape[1] - x, w + offset)
 
-        imgCrop = img[y:y + h, x:x + w]
+        imgCrop = img[y - offset:y + h + offset, x - offset:x + w + offset]
         imgCropShape = imgCrop.shape
         aspectRatio = h / w
         if aspectRatio > 1:
