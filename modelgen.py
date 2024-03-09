@@ -191,7 +191,9 @@ model.evaluate(X_test, y_cat_test, verbose=0)
 predictions = model.predict(X_test)
 print("Predictions done...")
 
-print(classification_report(y_test, predictions))
+# Removed classification report and confusion matrix for now
+# Rebound array to original shape
+
 plt.figure(figsize=(12, 12))
 sns.heatmap(confusion_matrix(y_test, predictions))
 plt.show()
