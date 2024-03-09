@@ -46,7 +46,7 @@ def draw_styled_landmarks(image, results):
                               mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
 
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 # Set mediapipe model 
 with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
     while cap.isOpened():
