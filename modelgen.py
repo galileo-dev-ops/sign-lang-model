@@ -18,17 +18,12 @@ from keras.callbacks import EarlyStopping
 
 import os
 
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-print(tf.__version__)
-print(cv2.__version__)
-print(skimage.__version__)
-
 print('Libraries imported')
 
-batch_size = 64
+batch_size = 128
 imageSize = 64
 target_dims = (imageSize, imageSize, 3)
-num_classes = 29
+num_classes = 5
 
 train_len = 87000
 train_dir = 'asl_alphabet_train/'
@@ -50,8 +45,6 @@ def get_data(folder):
                 label = 3
             elif folderName in ['E']:
                 label = 4
-            else:
-                label = 29
             '''
             elif folderName in ['F']:
                 label = 5
@@ -128,8 +121,8 @@ print("Copies made...")
 
 X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=0.3, random_state=42, stratify=y_data)
 
-y_cat_train = to_categorical(y_train, 5)
-y_cat_test = to_categorical(y_test, 5)
+y_cat_train = to_categorical(y_train, num_classes)
+y_cat_test = to_categorical(y_test, num_classes)
 
 # Checking the dimensions of all the variables
 print(X_train.shape)
@@ -161,7 +154,7 @@ model.add(Flatten())
 
 model.add(Dense(128, activation='relu'))
 
-model.add(Dense(29, activation='softmax'))
+model.add(Dense(5, activation='softmax'))
 
 model.summary()
 
@@ -198,4 +191,3 @@ print("Predictions done...")
 
 model.save('ASL.h5')
 print("Model saved successfully...")
-

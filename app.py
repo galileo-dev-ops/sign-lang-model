@@ -3,7 +3,7 @@ import numpy as np
 from keras.models import load_model
 
 # Load the trained model
-model = load_model('ASL.h5')
+model = load_model('ASLNEW.h5')
 
 # Initialize a video capture object
 cap = cv2.VideoCapture(0)
