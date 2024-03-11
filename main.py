@@ -8,8 +8,7 @@ import mediapipe as mp
 import cv2
 from my_functions import *
 import keyboard
-from tensorflow.keras.models import load_model
-from gingerit.gingerit import GingerIt
+from keras.models import load_model
 
 # Set the path to the data directory
 PATH = os.path.join('data')
@@ -19,9 +18,6 @@ actions = np.array(os.listdir(PATH))
 
 # Load the trained model
 model = load_model('my_model')
-
-# Create an instance of the GingerIt grammar correction tool
-parser = GingerIt()
 
 # Initialize the lists
 sentence, keypoints, last_prediction, grammar, grammar_result = [], [], [], [], []
